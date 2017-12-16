@@ -58,9 +58,6 @@ public class XlsFileWriter implements IFileWriter {
 	
 	private void writeStats(Sheet sheet, List <TransferEvent> transferEvents) {
 		
-		//Stream<TransferEvent> stream = ;
-		//DoubleStream valuesStream = stream.mapToDouble(o -> o.getValue());
-
 	    Cell cell = sheet.getRow(0).createCell(8);
 		cell.setCellValue("Total amount of currency transmitted in transactions");
 		
