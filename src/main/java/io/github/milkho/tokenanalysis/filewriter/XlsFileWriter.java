@@ -13,7 +13,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import io.github.milkho.tokenanalysis.model.TransferEvent;
 
-public class XlsFileWriter implements FileWriter {
+public class XlsFileWriter implements IFileWriter {
 	
 	private String excelFilePath;
 	

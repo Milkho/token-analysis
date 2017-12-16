@@ -9,7 +9,7 @@ import org.web3j.protocol.http.HttpService;
 
 import io.github.milkho.tokenanalysis.dao.ITransferEventDao;
 import io.github.milkho.tokenanalysis.dao.TransferEventDao;
-import io.github.milkho.tokenanalysis.filewriter.FileWriter;
+import io.github.milkho.tokenanalysis.filewriter.IFileWriter;
 import io.github.milkho.tokenanalysis.filewriter.XlsFileWriter;
 import io.github.milkho.tokenanalysis.generated.ERC20;
 import io.github.milkho.tokenanalysis.model.TransferEvent;
@@ -23,21 +23,20 @@ public class ERC20TokenController {
 	private Credentials credentials;
 	private ERC20 token;
 	private ITransferEventDao transferEventDao;
-	private FileWriter fileWriter;
+	private IFileWriter fileWriter;
 	
 	private Subscription subscription;
 	
 	public ERC20TokenController()  {
-		web3j = Web3j.build(new HttpService(INFURA_MAINNET_URL));
-		credentials = Credentials.create("0x00");
-		
+		web3j = Web3j.build(new HttpService(INFURA_MAINNET_URL));	
+		credentials = Credentials.create("0x00");	
 		transferEventDao = new TransferEventDao();
 		fileWriter = new XlsFileWriter();
 	}
 
 	public void processTransactions(final String contractAddress, final long firstBlock, final long lastBlock) {
 		token = ERC20.load(contractAddress, web3j, credentials, ERC20.GAS_PRICE, ERC20.GAS_LIMIT);
-		exportData();
+		
 		subscription = web3j.replayBlocksObservable(new DefaultBlockParameterNumber(firstBlock),
 				new DefaultBlockParameterNumber(lastBlock), true)		
 				.doOnCompleted(this::exportData)
@@ -58,7 +57,7 @@ public class ERC20TokenController {
 								transferEvent.setBlockNum(tx.getBlockNumber().longValue());
 								transferEvent.setTransactionHash(txReceipt.getResult().getTransactionHash());
 								transferEvent.setTimestamp(block.getBlock().getTimestamp().longValue());
-								//transferEventDao.save(transferEvent);
+								transferEventDao.save(transferEvent);
 
 								System.out.println(">> new transaction at block # " + tx.getBlockNumber().toString());
 							});

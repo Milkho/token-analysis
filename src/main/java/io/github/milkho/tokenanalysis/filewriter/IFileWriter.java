@@ -5,7 +5,7 @@ import java.util.List;
 
 import io.github.milkho.tokenanalysis.model.TransferEvent;
 
-public interface FileWriter {
+public interface IFileWriter {
 
 	String getfilePath();
 	
