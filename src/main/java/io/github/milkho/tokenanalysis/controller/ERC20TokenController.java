@@ -25,7 +25,6 @@ public class ERC20TokenController {
 	private ITransferEventDao transferEventDao;
 	private IFileWriter fileWriter;
 	
-	private Subscription subscription;
 	
 	public ERC20TokenController()  {
 		web3j = Web3j.build(new HttpService(INFURA_MAINNET_URL));	
@@ -37,7 +36,7 @@ public class ERC20TokenController {
 	public void processTransactions(final String contractAddress, final long firstBlock, final long lastBlock) {
 		token = ERC20.load(contractAddress, web3j, credentials, ERC20.GAS_PRICE, ERC20.GAS_LIMIT);
 		
-		subscription = web3j.replayBlocksObservable(new DefaultBlockParameterNumber(firstBlock),
+		web3j.replayBlocksObservable(new DefaultBlockParameterNumber(firstBlock),
 				new DefaultBlockParameterNumber(lastBlock), true)		
 				.doOnCompleted(this::exportData)
 				.doOnTerminate(this::terminate)
@@ -83,7 +82,6 @@ public class ERC20TokenController {
 	}
 	
 	private void terminate() {
-		subscription.unsubscribe();
 		transferEventDao.closeConnection();
 		System.out.println("Exiting");
 		System.exit(0);
